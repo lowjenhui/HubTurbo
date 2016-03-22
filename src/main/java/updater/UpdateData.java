@@ -12,17 +12,17 @@ import java.util.Optional;
  */
 public class UpdateData {
 
-    private List<UpdateDownloadLink> downloadLinks; // NOPMD - not made final for gson
+    private List<HtDownloadLink> downloadLinks; // NOPMD - not made final for gson
 
     public UpdateData() {
         downloadLinks = new ArrayList<>();
     }
 
     /**
-     * Get UpdateDownloadLink for update.
-     * @return Optional.empty() if there is no update, UpdateDownloadLink of update that can be downloaded otherwise
+     * Gets HtDownloadLink for update.
+     * @return Optional.empty() if there is no update, HtDownloadLink of update that can be downloaded otherwise
      */
-    public Optional<UpdateDownloadLink> getLatestUpdateDownloadLinkForCurrentVersion() {
+    public Optional<HtDownloadLink> getLatestUpdateDownloadLinkForCurrentVersion() {
         if (downloadLinks.isEmpty()) {
             return Optional.empty();
         }

@@ -95,7 +95,7 @@ public class UpdateManager {
         }
 
         // Checks if there is a new update since last update
-        Optional<UpdateDownloadLink> updateDownloadLink = getLatestUpdateDownloadLinkForCurrentVersion();
+        Optional<HtDownloadLink> updateDownloadLink = getLatestUpdateDownloadLinkForCurrentVersion();
 
         if (!updateDownloadLink.isPresent() ||
             !checkIfNewVersionAvailableToDownload(updateDownloadLink.get().getVersion())) {
@@ -128,7 +128,7 @@ public class UpdateManager {
             return false;
         }
 
-        updateConfig.setLastUpdateDownloadStatus(false);
+        updateConfig.setLastAppUpdateDownloadSuccessful(false);
         saveUpdateConfig();
 
         return extractJarUpdater();
@@ -276,14 +276,14 @@ public class UpdateManager {
      */
     private boolean checkIfNewVersionAvailableToDownload(Version version) {
         return Version.getCurrentVersion().compareTo(version) < 0 &&
-                !updateConfig.checkIfVersionWasPreviouslyDownloaded(version);
+                !updateConfig.wasPreviouslyDownloaded(version);
     }
 
     /**
      * Get latest HT version available to download
      * @return download link of a HT version
      */
-    private Optional<UpdateDownloadLink> getLatestUpdateDownloadLinkForCurrentVersion() {
+    private Optional<HtDownloadLink> getLatestUpdateDownloadLinkForCurrentVersion() {
         File updateDataFile = new File(UPDATE_LOCAL_DATA_NAME);
         JsonFileConverter jsonUpdateDataConverter = new JsonFileConverter(updateDataFile);
         UpdateData updateData = jsonUpdateDataConverter.loadFromFile(UpdateData.class).orElse(new UpdateData());
@@ -292,7 +292,7 @@ public class UpdateManager {
     }
 
     private void markAppUpdateDownloadSuccess(Version versionDownloaded) {
-        updateConfig.setLastUpdateDownloadStatus(true);
+        updateConfig.setLastAppUpdateDownloadSuccessful(true);
         updateConfig.addToVersionPreviouslyDownloaded(versionDownloaded);
         saveUpdateConfig();
     }
@@ -317,8 +317,8 @@ public class UpdateManager {
      * Runs updating clean up on quitting HubTurbo
      */
     public void onAppQuit() {
-        if (!applyUpdateImmediately && updateConfig.getLastUpdateDownloadStatus()) {
-            updateConfig.setLastUpdateDownloadStatus(false);
+        if (!applyUpdateImmediately && updateConfig.getLastAppUpdateDownloadSuccessful()) {
+            updateConfig.setLastAppUpdateDownloadSuccessful(false);
             saveUpdateConfig();
 
             runJarUpdaterWithoutExecute();

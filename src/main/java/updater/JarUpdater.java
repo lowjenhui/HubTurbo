@@ -191,9 +191,9 @@ public class JarUpdater extends Application {
     }
 
     /**
-     * Get backup name of jar file.
+     * Gets backup name of jar file.
      * If backup suffix option is provided, it will be used instead of standard backup suffix.
-     * If filename does not end with ".jar", append standard backup suffix to the filename
+     * If filename does not end with ".jar", appends standard backup suffix to the filename
      * @param filename filename which backup name should be generated
      * @return backup filename
      */

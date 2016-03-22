@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class UpdateConfig {
 
-    private boolean lastUpdateDownloadStatus;
+    private boolean isLastAppUpdateDownloadSuccessful;
     private List<Version> versionsPreviouslyDownloaded; // NOPMD - not made final for gson
 
     public UpdateConfig() {
@@ -19,18 +19,18 @@ public class UpdateConfig {
 
     /**
      * Sets last update download status
-     * @param status true if update download is successful, false otherwise
+     * @param isLastAppUpdateDownloadSuccessful true if update download is successful, false otherwise
      */
-    public void setLastUpdateDownloadStatus(boolean status) {
-        this.lastUpdateDownloadStatus = status;
+    public void setLastAppUpdateDownloadSuccessful(boolean isLastAppUpdateDownloadSuccessful) {
+        this.isLastAppUpdateDownloadSuccessful = isLastAppUpdateDownloadSuccessful;
     }
 
-    public boolean getLastUpdateDownloadStatus() {
-        return this.lastUpdateDownloadStatus;
+    public boolean getLastAppUpdateDownloadSuccessful() {
+        return this.isLastAppUpdateDownloadSuccessful;
     }
 
     /**
-     * Add a version to downloaded versions
+     * Adds a version to downloaded versions
      */
     public void addToVersionPreviouslyDownloaded(Version downloadedVersion) {
         versionsPreviouslyDownloaded.add(downloadedVersion);
@@ -39,7 +39,7 @@ public class UpdateConfig {
     /**
      * Checks if a version has been downloaded previously
      */
-    public boolean checkIfVersionWasPreviouslyDownloaded(Version version) {
+    public boolean wasPreviouslyDownloaded(Version version) {
         return versionsPreviouslyDownloaded.contains(version);
     }
 }

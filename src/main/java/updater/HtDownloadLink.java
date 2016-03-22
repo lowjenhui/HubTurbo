@@ -5,9 +5,9 @@ import util.Version;
 import java.net.URL;
 
 /**
- * Represents a HT version with its download link
+ * Represents a link to download a HT version
  */
-public class UpdateDownloadLink implements Comparable<UpdateDownloadLink> {
+public class HtDownloadLink implements Comparable<HtDownloadLink> {
     private Version version;
     private URL applicationFileLocation;
 
@@ -28,7 +28,7 @@ public class UpdateDownloadLink implements Comparable<UpdateDownloadLink> {
     }
 
     @Override
-    public int compareTo(UpdateDownloadLink other) {
+    public int compareTo(HtDownloadLink other) {
         return this.version.compareTo(other.version);
     }
 
@@ -37,10 +37,10 @@ public class UpdateDownloadLink implements Comparable<UpdateDownloadLink> {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof UpdateDownloadLink)) {
+        if (!(obj instanceof HtDownloadLink)) {
             return false;
         }
-        final UpdateDownloadLink other = (UpdateDownloadLink) obj;
+        final HtDownloadLink other = (HtDownloadLink) obj;
 
         return this.version.equals(other.version);
     }

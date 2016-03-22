@@ -20,14 +20,15 @@ public class UpdateConfigTest {
 
         Class<?> updateConfigClass = updateConfig.getClass();
 
-        Field lastUpdateDownloadStatusField = updateConfigClass.getDeclaredField("lastUpdateDownloadStatus");
-        lastUpdateDownloadStatusField.setAccessible(true);
+        Field isLastAppUpdateDownloadSuccessfulField =
+                updateConfigClass.getDeclaredField("isLastAppUpdateDownloadSuccessful");
+        isLastAppUpdateDownloadSuccessfulField.setAccessible(true);
 
-        updateConfig.setLastUpdateDownloadStatus(true);
-        assertTrue((boolean) lastUpdateDownloadStatusField.get(updateConfig));
+        updateConfig.setLastAppUpdateDownloadSuccessful(true);
+        assertTrue((boolean) isLastAppUpdateDownloadSuccessfulField.get(updateConfig));
 
-        updateConfig.setLastUpdateDownloadStatus(false);
-        assertFalse((boolean) lastUpdateDownloadStatusField.get(updateConfig));
+        updateConfig.setLastAppUpdateDownloadSuccessful(false);
+        assertFalse((boolean) isLastAppUpdateDownloadSuccessfulField.get(updateConfig));
     }
 
     @Test
@@ -37,14 +38,15 @@ public class UpdateConfigTest {
 
         Class<?> updateConfigClass = updateConfig.getClass();
 
-        Field lastUpdateDownloadStatusField = updateConfigClass.getDeclaredField("lastUpdateDownloadStatus");
-        lastUpdateDownloadStatusField.setAccessible(true);
+        Field isLastAppUpdateDownloadSuccessfulField =
+                updateConfigClass.getDeclaredField("isLastAppUpdateDownloadSuccessful");
+        isLastAppUpdateDownloadSuccessfulField.setAccessible(true);
 
-        lastUpdateDownloadStatusField.set(updateConfig, true);
-        assertTrue(updateConfig.getLastUpdateDownloadStatus());
+        isLastAppUpdateDownloadSuccessfulField.set(updateConfig, true);
+        assertTrue(updateConfig.getLastAppUpdateDownloadSuccessful());
 
-        lastUpdateDownloadStatusField.set(updateConfig, false);
-        assertFalse(updateConfig.getLastUpdateDownloadStatus());
+        isLastAppUpdateDownloadSuccessfulField.set(updateConfig, false);
+        assertFalse(updateConfig.getLastAppUpdateDownloadSuccessful());
     }
 
     @Test
@@ -89,8 +91,8 @@ public class UpdateConfigTest {
 
         versionsPreviouslyDownloadedField.set(updateConfig, manualListOfVersions);
 
-        assertTrue(updateConfig.checkIfVersionWasPreviouslyDownloaded(versionHaveBeenDownloaded));
-        assertFalse(updateConfig.checkIfVersionWasPreviouslyDownloaded(versionNeverDownloaded));
+        assertTrue(updateConfig.wasPreviouslyDownloaded(versionHaveBeenDownloaded));
+        assertFalse(updateConfig.wasPreviouslyDownloaded(versionNeverDownloaded));
 
     }
 }

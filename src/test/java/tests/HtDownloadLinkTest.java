@@ -1,7 +1,7 @@
 package tests;
 
 import org.junit.Test;
-import updater.UpdateDownloadLink;
+import updater.HtDownloadLink;
 import util.Version;
 
 import java.lang.reflect.Field;
@@ -14,16 +14,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
-public class UpdateDownloadLinkTest {
+public class HtDownloadLinkTest {
 
     @Test
     public void updateDownloadLinkCompareTo_sameVersionDiffLocation_sameObject() throws MalformedURLException {
         Version version = new Version(1, 0, 0);
-        UpdateDownloadLink a = new UpdateDownloadLink();
+        HtDownloadLink a = new HtDownloadLink();
         a.setVersion(version);
         a.setApplicationFileLocation(new URL("http://google.com"));
 
-        UpdateDownloadLink b = new UpdateDownloadLink();
+        HtDownloadLink b = new HtDownloadLink();
         b.setVersion(version);
         b.setApplicationFileLocation(new URL("http://yahoo.com"));
 
@@ -35,11 +35,11 @@ public class UpdateDownloadLinkTest {
     @Test
     public void updateDownloadLinkCompareTo_diffVersionSameLocation_diffObject() throws MalformedURLException {
         String fileLocationString = "http://google.com";
-        UpdateDownloadLink a = new UpdateDownloadLink();
+        HtDownloadLink a = new HtDownloadLink();
         a.setVersion(new Version(2, 0, 0));
         a.setApplicationFileLocation(new URL(fileLocationString));
 
-        UpdateDownloadLink b = new UpdateDownloadLink();
+        HtDownloadLink b = new HtDownloadLink();
         b.setVersion(new Version(1, 2, 0));
         b.setApplicationFileLocation(new URL(fileLocationString));
 
@@ -51,10 +51,10 @@ public class UpdateDownloadLinkTest {
     @Test
     public void updateDownloadLinkCompareTo_diffVersion_correctComparison() throws MalformedURLException {
         String fileLocationString = "http://google.com";
-        UpdateDownloadLink a = new UpdateDownloadLink();
+        HtDownloadLink a = new HtDownloadLink();
         a.setApplicationFileLocation(new URL(fileLocationString));
 
-        UpdateDownloadLink b = new UpdateDownloadLink();
+        HtDownloadLink b = new HtDownloadLink();
         b.setApplicationFileLocation(new URL(fileLocationString));
 
         a.setVersion(new Version(2, 0, 0));
@@ -69,7 +69,7 @@ public class UpdateDownloadLinkTest {
     @Test
     public void updateDownloadLinkGetVersion_setVersionByReflection_getCorrectValue()
             throws NoSuchFieldException, IllegalAccessException, MalformedURLException {
-        UpdateDownloadLink a = new UpdateDownloadLink();
+        HtDownloadLink a = new HtDownloadLink();
 
         a.setApplicationFileLocation(new URL("http://google.com"));
 
@@ -88,7 +88,7 @@ public class UpdateDownloadLinkTest {
     @Test
     public void updateDownloadLinkGetFileLocation_setLocationByReflection_getCorrectValue()
             throws NoSuchFieldException, IllegalAccessException, MalformedURLException {
-        UpdateDownloadLink a = new UpdateDownloadLink();
+        HtDownloadLink a = new HtDownloadLink();
         a.setVersion(new Version(10, 11, 12));
 
         URL fileLocation = new URL("http://google.com");
@@ -106,7 +106,7 @@ public class UpdateDownloadLinkTest {
     @Test
     public void updateDownloadLinkSetVersion_getVersionByReflection_valueSetCorrectly()
             throws NoSuchFieldException, IllegalAccessException, MalformedURLException {
-        UpdateDownloadLink a = new UpdateDownloadLink();
+        HtDownloadLink a = new HtDownloadLink();
         a.setApplicationFileLocation(new URL("http://google.com"));
 
         Version version = new Version(10, 11, 12);
@@ -124,7 +124,7 @@ public class UpdateDownloadLinkTest {
     @Test
     public void updateDownloadLinkSetFileLocation_getFileLocationByReflection_valueSetCorrectly()
             throws NoSuchFieldException, IllegalAccessException, MalformedURLException {
-        UpdateDownloadLink a = new UpdateDownloadLink();
+        HtDownloadLink a = new HtDownloadLink();
         a.setVersion(new Version(10, 11, 12));
 
         URL fileLocation = new URL("http://google.com");
