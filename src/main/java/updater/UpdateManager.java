@@ -63,6 +63,7 @@ public class UpdateManager {
     public UpdateManager(UI ui, UpdateProgressWindow updateProgressWindow) {
         this.ui = ui;
         this.updateProgressWindow = updateProgressWindow;
+        this.applyUpdateImmediately = false;
         loadUpdateConfig();
     }
 
@@ -199,15 +200,16 @@ public class UpdateManager {
     }
 
     /**
-     * Get version of HubTurbo from Jar backup file (filename is "HubTurbo_V[major].[minor].[patch].jar")
-     * @param filename filename of HT backup JAR
-     * @return version of HT of backup JAR, or Version 0 if filename not matching backup file
+     * Gets version of HubTurbo from Jar backup file.
+     * Expects filename in format "HubTurbo_V[major].[minor].[patch].jar".
+     * @param filename filename of HT backup JAR, in format "HubTurbo_V[major].[minor].[patch].jar"
+     * @return version of HT of backup JAR
      */
     private Version getVersionOfHtBackupFileFromFilename(String filename) {
         Pattern htJarFileBackupPattern = Pattern.compile(HT_BACKUP_FILENAME_PATTERN_STRING);
         Matcher htJarFileBackupMatcher = htJarFileBackupPattern.matcher(filename);
         if (!htJarFileBackupMatcher.find()) {
-            return new Version(0, 0, 0);
+            assert false;
         }
 
         return Version.fromString(htJarFileBackupMatcher.group(1));
