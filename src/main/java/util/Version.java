@@ -55,6 +55,10 @@ public class Version implements Comparable<Version> {
                            Integer.parseInt(versionMatcher.group(3)));
     }
 
+    /**
+     * Checks if a given version is of same major or just one major greater than current version
+     * @param version
+     */
     public static boolean isVersionMajorSameOrJustOneGreaterFromCurrent(Version version) {
         return version.getMajor() == getCurrentVersion().getMajor() ||
                 version.getMajor() == getCurrentVersion().getMajor() + 1;

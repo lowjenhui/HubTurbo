@@ -89,7 +89,6 @@ public class UpdateManager {
 
         cleanupHTBackupJar();
 
-
         if (!downloadUpdateData()) {
             logger.error(ERROR_DOWNLOAD_UPDATE_DATA);
             return;
@@ -280,6 +279,10 @@ public class UpdateManager {
                 !updateConfig.checkIfVersionWasPreviouslyDownloaded(version);
     }
 
+    /**
+     * Get latest HT version available to download
+     * @return download link of a HT version
+     */
     private Optional<UpdateDownloadLink> getLatestUpdateDownloadLinkForCurrentVersion() {
         File updateDataFile = new File(UPDATE_LOCAL_DATA_NAME);
         JsonFileConverter jsonUpdateDataConverter = new JsonFileConverter(updateDataFile);

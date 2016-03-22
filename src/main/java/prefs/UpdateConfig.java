@@ -17,6 +17,10 @@ public class UpdateConfig {
         versionsPreviouslyDownloaded = new ArrayList<>();
     }
 
+    /**
+     * Sets last update download status
+     * @param status true if update download is successful, false otherwise
+     */
     public void setLastUpdateDownloadStatus(boolean status) {
         this.lastUpdateDownloadStatus = status;
     }
@@ -25,10 +29,16 @@ public class UpdateConfig {
         return this.lastUpdateDownloadStatus;
     }
 
+    /**
+     * Add a version to downloaded versions
+     */
     public void addToVersionPreviouslyDownloaded(Version downloadedVersion) {
         versionsPreviouslyDownloaded.add(downloadedVersion);
     }
 
+    /**
+     * Checks if a version has been downloaded previously
+     */
     public boolean checkIfVersionWasPreviouslyDownloaded(Version version) {
         return versionsPreviouslyDownloaded.contains(version);
     }
