@@ -198,7 +198,7 @@ public class JarUpdater extends Application {
      * @return backup filename
      */
     private String getJarBackupFilename(String filename) {
-        Pattern jarFilenamePattern = Pattern.compile("^(.*)\\.(jar|JAR)$");
+        Pattern jarFilenamePattern = Pattern.compile("^(.*)\\.jar$", Pattern.CASE_INSENSITIVE);
         Matcher jarFilenameMatcher = jarFilenamePattern.matcher(filename);
 
         if (!jarFilenameMatcher.find()) {

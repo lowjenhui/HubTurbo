@@ -194,17 +194,23 @@ public class UpdateManager {
     }
 
     private Comparator<File> getHtBackupFileComparatorByVersion() {
-        return (a, b) -> {
-            Pattern htJarFileBackupPattern = Pattern.compile(HT_BACKUP_FILENAME_PATTERN_STRING);
-            Matcher htJarFileBackupMatcher = htJarFileBackupPattern.matcher(a.getName());
-            htJarFileBackupMatcher.find();
-            Version aVersion = Version.fromString(htJarFileBackupMatcher.group(1));
-            htJarFileBackupMatcher = htJarFileBackupPattern.matcher(b.getName());
-            htJarFileBackupMatcher.find();
-            Version bVersion = Version.fromString(htJarFileBackupMatcher.group(1));
+        return (a, b) -> getVersionOfHtBackupFileFromFilename(a.getName())
+                .compareTo(getVersionOfHtBackupFileFromFilename(b.getName()));
+    }
 
-            return aVersion.compareTo(bVersion);
-        };
+    /**
+     * Get version of HubTurbo from Jar backup file (filename is "HubTurbo_V[major].[minor].[patch].jar")
+     * @param filename filename of HT backup JAR
+     * @return version of HT of backup JAR, or Version 0 if filename not matching backup file
+     */
+    private Version getVersionOfHtBackupFileFromFilename(String filename) {
+        Pattern htJarFileBackupPattern = Pattern.compile(HT_BACKUP_FILENAME_PATTERN_STRING);
+        Matcher htJarFileBackupMatcher = htJarFileBackupPattern.matcher(filename);
+        if (!htJarFileBackupMatcher.find()) {
+            return new Version(0, 0, 0);
+        }
+
+        return Version.fromString(htJarFileBackupMatcher.group(1));
     }
 
     /**

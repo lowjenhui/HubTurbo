@@ -12,10 +12,10 @@ import java.util.Optional;
  */
 public class UpdateData {
 
-    private List<UpdateDownloadLink> hubturboVersionsDownloadLink; // NOPMD - not made final for gson
+    private List<UpdateDownloadLink> downloadLinks; // NOPMD - not made final for gson
 
     public UpdateData() {
-        hubturboVersionsDownloadLink = new ArrayList<>();
+        downloadLinks = new ArrayList<>();
     }
 
     /**
@@ -23,21 +23,15 @@ public class UpdateData {
      * @return Optional.empty() if there is no update, UpdateDownloadLink of update that can be downloaded otherwise
      */
     public Optional<UpdateDownloadLink> getLatestUpdateDownloadLinkForCurrentVersion() {
-        if (hubturboVersionsDownloadLink.isEmpty()) {
+        if (downloadLinks.isEmpty()) {
             return Optional.empty();
         }
 
         // List the update link in descending order of version
-        Collections.sort(hubturboVersionsDownloadLink, Collections.reverseOrder());
+        Collections.sort(downloadLinks, Collections.reverseOrder());
 
         // Get link of version that has same major version or just 1 major version up than current
-        Optional<UpdateDownloadLink> updateLink = hubturboVersionsDownloadLink.stream()
+        return downloadLinks.stream()
                 .filter(link -> Version.isVersionMajorSameOrJustOneGreaterFromCurrent(link.getVersion())).findFirst();
-
-        if (updateLink.isPresent()) {
-            return updateLink;
-        }
-
-        return Optional.empty();
     }
 }
