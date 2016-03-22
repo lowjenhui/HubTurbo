@@ -5,11 +5,11 @@ import util.Version;
 import java.net.URL;
 
 /**
- * Represents a link to download a HT version
+ * Represents a download link to a HT version
  */
 public class HtDownloadLink implements Comparable<HtDownloadLink> {
     private Version version;
-    private URL applicationFileLocation;
+    private URL downloadLinkUrl;
 
     public Version getVersion() {
         return version;
@@ -19,12 +19,12 @@ public class HtDownloadLink implements Comparable<HtDownloadLink> {
         this.version = version;
     }
 
-    public URL getApplicationFileLocation() {
-        return applicationFileLocation;
+    public URL getDownloadLinkUrl() {
+        return downloadLinkUrl;
     }
 
-    public void setApplicationFileLocation(URL applicationFileLocation) {
-        this.applicationFileLocation = applicationFileLocation;
+    public void setDownloadLinkUrl(URL downloadLinkUrl) {
+        this.downloadLinkUrl = downloadLinkUrl;
     }
 
     @Override

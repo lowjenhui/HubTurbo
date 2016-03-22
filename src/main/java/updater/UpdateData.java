@@ -19,8 +19,8 @@ public class UpdateData {
     }
 
     /**
-     * Gets HtDownloadLink for update.
-     * @return Optional.empty() if there is no update, HtDownloadLink of update that can be downloaded otherwise
+     * Gets HtDownloadLink for HT to update to.
+     * @return HtDownloadLink that current version can update to, Optional.empty() otherwise
      */
     public Optional<HtDownloadLink> getLatestUpdateDownloadLinkForCurrentVersion() {
         if (downloadLinks.isEmpty()) {

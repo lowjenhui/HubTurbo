@@ -12,20 +12,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 
 public class HtDownloadLinkTest {
 
     @Test
-    public void updateDownloadLinkCompareTo_sameVersionDiffLocation_sameObject() throws MalformedURLException {
+    public void htDownloadLinkCompareTo_sameVersionDiffDownloadLinkUrln_sameObject() throws MalformedURLException {
         Version version = new Version(1, 0, 0);
         HtDownloadLink a = new HtDownloadLink();
         a.setVersion(version);
-        a.setApplicationFileLocation(new URL("http://google.com"));
+        a.setDownloadLinkUrl(new URL("http://google.com"));
 
         HtDownloadLink b = new HtDownloadLink();
         b.setVersion(version);
-        b.setApplicationFileLocation(new URL("http://yahoo.com"));
+        b.setDownloadLinkUrl(new URL("http://yahoo.com"));
 
         assertTrue(a.compareTo(b) == 0);
         assertTrue(a.equals(b));
@@ -33,15 +32,15 @@ public class HtDownloadLinkTest {
     }
 
     @Test
-    public void updateDownloadLinkCompareTo_diffVersionSameLocation_diffObject() throws MalformedURLException {
+    public void htDownloadLinkCompareTo_diffVersionSameDownloadLinkUrl_diffObject() throws MalformedURLException {
         String fileLocationString = "http://google.com";
         HtDownloadLink a = new HtDownloadLink();
         a.setVersion(new Version(2, 0, 0));
-        a.setApplicationFileLocation(new URL(fileLocationString));
+        a.setDownloadLinkUrl(new URL(fileLocationString));
 
         HtDownloadLink b = new HtDownloadLink();
         b.setVersion(new Version(1, 2, 0));
-        b.setApplicationFileLocation(new URL(fileLocationString));
+        b.setDownloadLinkUrl(new URL(fileLocationString));
 
         assertFalse(a.compareTo(b) == 0);
         assertFalse(a.equals(b));
@@ -49,13 +48,13 @@ public class HtDownloadLinkTest {
     }
 
     @Test
-    public void updateDownloadLinkCompareTo_diffVersion_correctComparison() throws MalformedURLException {
+    public void htDownloadLinkCompareTo_diffVersion_correctComparison() throws MalformedURLException {
         String fileLocationString = "http://google.com";
         HtDownloadLink a = new HtDownloadLink();
-        a.setApplicationFileLocation(new URL(fileLocationString));
+        a.setDownloadLinkUrl(new URL(fileLocationString));
 
         HtDownloadLink b = new HtDownloadLink();
-        b.setApplicationFileLocation(new URL(fileLocationString));
+        b.setDownloadLinkUrl(new URL(fileLocationString));
 
         a.setVersion(new Version(2, 0, 0));
         b.setVersion(new Version(1, 2, 0));
@@ -67,17 +66,17 @@ public class HtDownloadLinkTest {
     }
 
     @Test
-    public void updateDownloadLinkGetVersion_setVersionByReflection_getCorrectValue()
+    public void htDownloadLinkGetVersion_setVersionByReflection_getCorrectValue()
             throws NoSuchFieldException, IllegalAccessException, MalformedURLException {
         HtDownloadLink a = new HtDownloadLink();
 
-        a.setApplicationFileLocation(new URL("http://google.com"));
+        a.setDownloadLinkUrl(new URL("http://google.com"));
 
         Version version = new Version(10, 11, 12);
 
-        Class<?> updateDownloadLinkClass = a.getClass();
+        Class<?> htDownloadLinkClass = a.getClass();
 
-        Field versionField = updateDownloadLinkClass.getDeclaredField("version");
+        Field versionField = htDownloadLinkClass.getDeclaredField("version");
         versionField.setAccessible(true);
 
         versionField.set(a, version);
@@ -86,35 +85,35 @@ public class HtDownloadLinkTest {
     }
 
     @Test
-    public void updateDownloadLinkGetFileLocation_setLocationByReflection_getCorrectValue()
+    public void htDownloadLinkGetDownloadLinkUrl_setDownloadLinkUrlByReflection_getCorrectValue()
             throws NoSuchFieldException, IllegalAccessException, MalformedURLException {
         HtDownloadLink a = new HtDownloadLink();
         a.setVersion(new Version(10, 11, 12));
 
         URL fileLocation = new URL("http://google.com");
 
-        Class<?> updateDownloadLinkClass = a.getClass();
+        Class<?> htDownloadLinkClass = a.getClass();
 
-        Field applicationFileLocationField = updateDownloadLinkClass.getDeclaredField("applicationFileLocation");
-        applicationFileLocationField.setAccessible(true);
+        Field downloadLinkUrlField = htDownloadLinkClass.getDeclaredField("downloadLinkUrl");
+        downloadLinkUrlField.setAccessible(true);
 
-        applicationFileLocationField.set(a, fileLocation);
+        downloadLinkUrlField.set(a, fileLocation);
 
-        assertEquals(fileLocation, a.getApplicationFileLocation());
+        assertEquals(fileLocation, a.getDownloadLinkUrl());
     }
 
     @Test
-    public void updateDownloadLinkSetVersion_getVersionByReflection_valueSetCorrectly()
+    public void htDownloadLinkSetVersion_getVersionByReflection_valueSetCorrectly()
             throws NoSuchFieldException, IllegalAccessException, MalformedURLException {
         HtDownloadLink a = new HtDownloadLink();
-        a.setApplicationFileLocation(new URL("http://google.com"));
+        a.setDownloadLinkUrl(new URL("http://google.com"));
 
         Version version = new Version(10, 11, 12);
         a.setVersion(version);
 
-        Class<?> updateDownloadLinkClass = a.getClass();
+        Class<?> htDownloadLinkClass = a.getClass();
 
-        Field versionField = updateDownloadLinkClass.getDeclaredField("version");
+        Field versionField = htDownloadLinkClass.getDeclaredField("version");
         versionField.setAccessible(true);
 
         Version versionFromReflection = (Version) versionField.get(a);
@@ -122,21 +121,21 @@ public class HtDownloadLinkTest {
     }
 
     @Test
-    public void updateDownloadLinkSetFileLocation_getFileLocationByReflection_valueSetCorrectly()
+    public void htDownloadLinkSetDownloadLinkUrl_getDownloadLinkUrlByReflection_valueSetCorrectly()
             throws NoSuchFieldException, IllegalAccessException, MalformedURLException {
         HtDownloadLink a = new HtDownloadLink();
         a.setVersion(new Version(10, 11, 12));
 
         URL fileLocation = new URL("http://google.com");
 
-        a.setApplicationFileLocation(fileLocation);
+        a.setDownloadLinkUrl(fileLocation);
 
-        Class<?> updateDownloadLinkClass = a.getClass();
+        Class<?> htDownloadLinkClass = a.getClass();
 
-        Field applicationFileLocationField = updateDownloadLinkClass.getDeclaredField("applicationFileLocation");
-        applicationFileLocationField.setAccessible(true);
+        Field downloadLinkUrlField = htDownloadLinkClass.getDeclaredField("downloadLinkUrl");
+        downloadLinkUrlField.setAccessible(true);
 
-        URL fileLocationFromReflection = (URL) applicationFileLocationField.get(a);
+        URL fileLocationFromReflection = (URL) downloadLinkUrlField.get(a);
         assertEquals(fileLocation, fileLocationFromReflection);
     }
 }

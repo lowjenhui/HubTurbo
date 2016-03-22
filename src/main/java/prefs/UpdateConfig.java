@@ -18,7 +18,7 @@ public class UpdateConfig {
     }
 
     /**
-     * Sets last update download status
+     * Sets last app update download status
      * @param isLastAppUpdateDownloadSuccessful true if update download is successful, false otherwise
      */
     public void setLastAppUpdateDownloadSuccessful(boolean isLastAppUpdateDownloadSuccessful) {

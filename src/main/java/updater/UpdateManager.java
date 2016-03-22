@@ -41,15 +41,19 @@ public class UpdateManager {
     // Directories and file names
     private static final String UPDATE_DIRECTORY = "updates";
     // TODO change to release branch on merging with master
-    private static final String UPDATE_SERVER_DATA_NAME =
+    private static final String UPDATE_DATA_SERVER_LINK =
             "https://raw.githubusercontent.com/HubTurbo/HubTurbo/1271-updater-data/HubTurboUpdate.json";
-    private static final String UPDATE_LOCAL_DATA_NAME = UPDATE_DIRECTORY + File.separator + "HubTurbo.json";
-    private static final String UPDATE_APP_NAME = "HubTurbo.jar";
-    private static final String UPDATE_APP_PATH = UPDATE_DIRECTORY + File.separator + UPDATE_APP_NAME;
+    private static final String UPDATE_DATA_LOCAL_PATH = UPDATE_DIRECTORY + File.separator + "HubTurbo.json";
+    private static final String APP_NAME = "HubTurbo.jar";
+    private static final String UPDATE_APP_PATH = UPDATE_DIRECTORY + File.separator + APP_NAME;
     public static final String UPDATE_CONFIG_FILENAME = "updateConfig.json";
-    private static final String UPDATE_JAR_UPDATER_APP_PATH = UPDATE_DIRECTORY + File.separator + "jarUpdater.jar";
+    private static final String JAR_UPDATER_APP_PATH = UPDATE_DIRECTORY + File.separator + "jarUpdater.jar";
 
     // Constants
+
+    /**
+     * The number of past HT version JARs to be kept
+     */
     private static final int MAX_HT_BACKUP_JAR_KEPT = 3;
     private static final String HT_BACKUP_FILENAME_PATTERN_STRING =
             "HubTurbo_(" + Version.VERSION_PATTERN_STRING + ")\\.(jar|JAR)$";
@@ -58,12 +62,12 @@ public class UpdateManager {
     private UpdateConfig updateConfig;
     private final UpdateProgressWindow updateProgressWindow;
     private final UI ui;
-    private boolean applyUpdateImmediately;
+    private boolean isUserWantsImmediateUpdate;
 
     public UpdateManager(UI ui, UpdateProgressWindow updateProgressWindow) {
         this.ui = ui;
         this.updateProgressWindow = updateProgressWindow;
-        this.applyUpdateImmediately = false;
+        this.isUserWantsImmediateUpdate = false;
         loadUpdateConfig();
     }
 
@@ -87,7 +91,7 @@ public class UpdateManager {
             return;
         }
 
-        cleanupHTBackupJar();
+        cleanupHTBackupJars();
 
         if (!downloadUpdateData()) {
             logger.error(ERROR_DOWNLOAD_UPDATE_DATA);
@@ -95,19 +99,18 @@ public class UpdateManager {
         }
 
         // Checks if there is a new update since last update
-        Optional<HtDownloadLink> updateDownloadLink = getLatestUpdateDownloadLinkForCurrentVersion();
+        Optional<HtDownloadLink> htDownloadLink = getLatestHtDownloadLinkForCurrentVersion();
 
-        if (!updateDownloadLink.isPresent() ||
-            !checkIfNewVersionAvailableToDownload(updateDownloadLink.get().getVersion())) {
+        if (!htDownloadLink.isPresent() || !isVersionDownloadableUpdate(htDownloadLink.get().getVersion())) {
             return;
         }
 
-        if (!downloadUpdateForApplication(updateDownloadLink.get().getApplicationFileLocation())) {
+        if (!downloadUpdateForApplication(htDownloadLink.get().getDownloadLinkUrl())) {
             logger.error(ERROR_DOWNLOAD_UPDATE_APP);
             return;
         }
 
-        markAppUpdateDownloadSuccess(updateDownloadLink.get().getVersion());
+        markAppUpdateDownloadSuccess(htDownloadLink.get().getVersion());
 
         // Prompt user for restarting application to apply update
         promptUserToApplyUpdateImmediately();
@@ -136,7 +139,7 @@ public class UpdateManager {
 
     private boolean extractJarUpdater() {
         logger.info("Extracting jarUpdater");
-        File jarUpdaterFile = new File(UPDATE_JAR_UPDATER_APP_PATH);
+        File jarUpdaterFile = new File(JAR_UPDATER_APP_PATH);
 
         try {
             jarUpdaterFile.createNewFile();
@@ -159,7 +162,7 @@ public class UpdateManager {
     /**
      * Keeps the number of HT Jar in the folder used as backup to specified amount.
      */
-    private void cleanupHTBackupJar() {
+    private void cleanupHTBackupJars() {
         logger.info("Cleaning up backup JAR");
 
         File currDirectory = new File(".");
@@ -171,10 +174,11 @@ public class UpdateManager {
             assert false;
             return;
         }
-        assert filesInCurrentDirectory != null;
+        assert filesInCurrentDirectory != null; // to prevent findBugs warning
 
         List<File> listOfFilesInCurrDirectory = Arrays.asList(filesInCurrentDirectory);
 
+        // Exclude current version in case user is running backup Jar
         List<File> allHtBackupFiles = listOfFilesInCurrDirectory.stream()
                 .filter(f -> !f.getName().equals(String.format("HubTurbo_%s.jar", Version.getCurrentVersion())) &&
                              f.getName().matches(HT_BACKUP_FILENAME_PATTERN_STRING))
@@ -205,13 +209,13 @@ public class UpdateManager {
      * @return version of HT of backup JAR
      */
     private Version getVersionOfHtBackupFileFromFilename(String filename) {
-        Pattern htJarFileBackupPattern = Pattern.compile(HT_BACKUP_FILENAME_PATTERN_STRING);
-        Matcher htJarFileBackupMatcher = htJarFileBackupPattern.matcher(filename);
-        if (!htJarFileBackupMatcher.find()) {
+        Pattern htJarBackupFilenamePattern = Pattern.compile(HT_BACKUP_FILENAME_PATTERN_STRING);
+        Matcher htJarBackupFilenameMatcher = htJarBackupFilenamePattern.matcher(filename);
+        if (!htJarBackupFilenameMatcher.find()) {
             assert false;
         }
 
-        return Version.fromString(htJarFileBackupMatcher.group(1));
+        return Version.fromString(htJarBackupFilenameMatcher.group(1));
     }
 
     /**
@@ -223,8 +227,8 @@ public class UpdateManager {
         logger.info("Downloading update data");
         try {
             FileDownloader fileDownloader = new FileDownloader(
-                    new URI(UPDATE_SERVER_DATA_NAME),
-                    new File(UPDATE_LOCAL_DATA_NAME),
+                    new URI(UPDATE_DATA_SERVER_LINK),
+                    new File(UPDATE_DATA_LOCAL_PATH),
                     a -> {});
             return fileDownloader.download();
         } catch (URISyntaxException e) {
@@ -264,7 +268,7 @@ public class UpdateManager {
     }
 
     /**
-     * Checks if a given version is a new version that can be downloaded.
+     * Checks if a given version is an updated version that can be downloaded.
      * If that version was previously downloaded (even if newer than current), we will not download it again.
      *
      * Scenario: on V0.0.0, V1.0.0 was downloaded. However, user is still using V0.0.0 and there is no newer update
@@ -274,17 +278,16 @@ public class UpdateManager {
      * @param version version to be checked if it is an update
      * @return true if the given version can be downloaded, false otherwise
      */
-    private boolean checkIfNewVersionAvailableToDownload(Version version) {
-        return Version.getCurrentVersion().compareTo(version) < 0 &&
-                !updateConfig.wasPreviouslyDownloaded(version);
+    private boolean isVersionDownloadableUpdate(Version version) {
+        return Version.getCurrentVersion().compareTo(version) < 0 && !updateConfig.wasPreviouslyDownloaded(version);
     }
 
     /**
-     * Get latest HT version available to download
-     * @return download link of a HT version
+     * Gets latest HT version available to download from update data
+     * @return download link to a HT version
      */
-    private Optional<HtDownloadLink> getLatestUpdateDownloadLinkForCurrentVersion() {
-        File updateDataFile = new File(UPDATE_LOCAL_DATA_NAME);
+    private Optional<HtDownloadLink> getLatestHtDownloadLinkForCurrentVersion() {
+        File updateDataFile = new File(UPDATE_DATA_LOCAL_PATH);
         JsonFileConverter jsonUpdateDataConverter = new JsonFileConverter(updateDataFile);
         UpdateData updateData = jsonUpdateDataConverter.loadFromFile(UpdateData.class).orElse(new UpdateData());
 
@@ -317,7 +320,7 @@ public class UpdateManager {
      * Runs updating clean up on quitting HubTurbo
      */
     public void onAppQuit() {
-        if (!applyUpdateImmediately && updateConfig.getLastAppUpdateDownloadSuccessful()) {
+        if (!isUserWantsImmediateUpdate && updateConfig.getLastAppUpdateDownloadSuccessful()) {
             updateConfig.setLastAppUpdateDownloadSuccessful(false);
             saveUpdateConfig();
 
@@ -342,9 +345,9 @@ public class UpdateManager {
     }
 
     private boolean runJarUpdater(boolean shouldExecuteJar) {
-        String restarterAppPath = UPDATE_JAR_UPDATER_APP_PATH;
+        String restarterAppPath = JAR_UPDATER_APP_PATH;
         String cmdArg = String.format("--source=%s --target=%s --execute-jar=%s --backup-suffix=_%s",
-                UPDATE_APP_PATH, UPDATE_APP_NAME, shouldExecuteJar ? "y" : "n", Version.getCurrentVersion().toString());
+                UPDATE_APP_PATH, APP_NAME, shouldExecuteJar ? "y" : "n", Version.getCurrentVersion().toString());
 
         String command = String.format("java -jar %1$s %2$s", restarterAppPath, cmdArg);
         logger.info("Executing JAR of restarter with command: " + command);
@@ -369,11 +372,11 @@ public class UpdateManager {
         Platform.runLater(() -> {
             String message = String.format("This will quit the application and restart it.%n" +
                     "Otherwise, update will be applied when you exit HubTurbo.");
-            applyUpdateImmediately = DialogMessage.showYesNoWarningDialog("Update application",
+            isUserWantsImmediateUpdate = DialogMessage.showYesNoWarningDialog("Update application",
                     "Would you like to update HubTurbo now?",
                     message,
                     "Yes", "No");
-            if (applyUpdateImmediately && runJarUpdaterWithExecute()) {
+            if (isUserWantsImmediateUpdate && runJarUpdaterWithExecute()) {
                 logger.info("Quitting application to apply update");
                 ui.quit();
             }
