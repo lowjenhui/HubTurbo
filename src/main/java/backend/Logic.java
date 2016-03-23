@@ -266,8 +266,8 @@ public class Logic {
 
         return updateIssueLabelsOnServer(issue, newLabels)
                 .thenCombine(localLabelsReplaceFuture,
-                             (isUpdateSuccessful, locallyModifiedIssue) -> handleIssueLabelsUpdateResult(
-                                     isUpdateSuccessful, locallyModifiedIssue, originalLabels));
+                        (isUpdateSuccessful, locallyModifiedIssue) -> handleIssueLabelsUpdateResult(
+                                isUpdateSuccessful, locallyModifiedIssue, originalLabels));
     }
 
     /**
@@ -351,7 +351,7 @@ public class Logic {
         // AppliedFilterEvent will be triggered asynchronously when repo(s) have finished opening, so just terminate
         if (hasRepoSpecifiedInFilter(panel)) return;
 
-        Platform.runLater (() -> UI.events.triggerEvent(new AppliedFilterEvent(panel)));
+        Platform.runLater(() -> UI.events.triggerEvent(new AppliedFilterEvent(panel)));
     }
 
     private boolean hasRepoSpecifiedInFilter(FilterPanel panel) {
@@ -415,5 +415,14 @@ public class Logic {
      */
     public MultiModel getModels() {
         return models;
+    }
+
+    public void redownloadCache() {
+        Set<String> storedRepos = getStoredRepos();
+        
+        for (String repo : storedRepos) {
+            repoIO.removeRepository(repo);
+            repoIO.openRepository(repo);
+        }
     }
 }

@@ -10,11 +10,20 @@ import java.util.List;
  */
 public class UpdateConfig {
 
+    private Version lastUsedHtVersion;
     private boolean isLastAppUpdateDownloadSuccessful;
     private List<Version> versionsPreviouslyDownloaded; // NOPMD - not made final for gson
 
     public UpdateConfig() {
         versionsPreviouslyDownloaded = new ArrayList<>();
+    }
+
+    public void setLastUsedHtVersion(Version version) {
+        this.lastUsedHtVersion = version;
+    }
+
+    public Version getLastUsedHtVersion() {
+        return this.lastUsedHtVersion;
     }
 
     /**
